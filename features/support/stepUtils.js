@@ -1,5 +1,5 @@
-exports.getReturn = function () {
-  var
+function getReturn () {
+  const
     args = Array.prototype.slice.call(arguments),
     action = args.shift(),
     cb = args.pop();
@@ -18,4 +18,6 @@ exports.getReturn = function () {
       this.result = error;
       cb();
     });
-};
+}
+
+module.exports = getReturn;

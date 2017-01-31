@@ -1,10 +1,10 @@
-var
+const
   async = require('async'),
   Promise = require('bluebird');
 
-var apiSteps = function () {
+function apiSteps () {
   this.Then(/^I'm ?(not)* able to get the document(?: in index "([^"]*)")?$/, function (not, index, callback) {
-    var main = function (callbackAsync) {
+    function main(callbackAsync) {
       this.api.get(this.result._id, index)
         .then(body => {
           if (body.error && !not) {
@@ -42,8 +42,7 @@ var apiSteps = function () {
 
           callbackAsync(error);
         });
-    };
-
+    }
 
     async.retry({times: 20, interval: 20}, main.bind(this), function (err) {
       if (err) {
@@ -59,7 +58,7 @@ var apiSteps = function () {
   });
 
   this.Then(/^my document has the value "([^"]*)" in field "([^"]*)"$/, function (value, field, callback) {
-    var main = function (callbackAsync) {
+    function main (callbackAsync) {
       setTimeout(function () {
         this.api.get(this.result._id)
           .then(function (body) {
@@ -85,7 +84,7 @@ var apiSteps = function () {
             callbackAsync(error);
           });
       }.bind(this), 100); // end setTimeout
-    };
+    }
 
     async.retry(20, main.bind(this), function (err) {
       if (err) {
@@ -102,8 +101,9 @@ var apiSteps = function () {
   });
 
   this.Then(/^I ?(don't)* find a document with "([^"]*)"(?: in field "([^"]*)")?(?: in index "([^"]*)")?(?: with scroll "([^"]*)")?$/, function (dont, value, field, index, scroll) {
-    var query = {query: { match: { [field]: (value === 'true' ? true : value) }}};
-    var args = {};
+    const
+      query = {query: {match: {[field]: (value === 'true' ? true : value)}}},
+      args = {};
 
     if (scroll) {
       args.scroll = scroll;
@@ -201,6 +201,6 @@ var apiSteps = function () {
         callback(error);
       });
   });
-};
+}
 
 module.exports = apiSteps;

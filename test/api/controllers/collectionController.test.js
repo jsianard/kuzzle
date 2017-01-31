@@ -1,4 +1,4 @@
-var
+const
   Promise = require('bluebird'),
   should = require('should'),
   sinon = require('sinon'),
@@ -10,21 +10,27 @@ var
   sandbox = sinon.sandbox.create();
 
 describe('Test: collection controller', () => {
-  var
+  const
+    foo = {foo: 'bar'};
+
+  let
     collectionController,
     kuzzle,
-    foo = {foo: 'bar'},
-    index = '%text',
-    collection = 'unit-test-collectionController',
     request,
-    engine;
+    engine,
+    index,
+    collection;
 
   beforeEach(() => {
-    var data = {
+    const data = {
       controller: 'collection',
       index,
       collection
     };
+
+    index = '%text';
+    collection = 'unit-test-collectionController';
+
     kuzzle = new KuzzleMock();
     engine = kuzzle.services.list.storageEngine;
     collectionController = new CollectionController(kuzzle);
@@ -78,7 +84,7 @@ describe('Test: collection controller', () => {
     it('should trigger the proper methods and return a valid response', () => {
       return collectionController.truncate(request)
         .then(response => {
-          var truncate = kuzzle.services.list.storageEngine.truncateCollection;
+          const truncate = kuzzle.services.list.storageEngine.truncateCollection;
 
           should(truncate).be.calledOnce();
           should(truncate).be.calledWith(request);
@@ -258,7 +264,7 @@ describe('Test: collection controller', () => {
     });
 
     it('should call the right functions and respond with the right response if there is an error', () => {
-      var errorResponse = {
+      const errorResponse = {
         valid: false,
         details: ['bad bad is a bad type'],
         message: 'Some error message'

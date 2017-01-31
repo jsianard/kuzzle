@@ -1,10 +1,8 @@
-var
-  Promise = require('bluebird');
+const Promise = require('bluebird');
 
-var apiSteps = function () {
+function apiSteps () {
   this.When(/^I ?(can't)* write the document ?(?:"([^"]*)")?(?: in index "([^"]*)")?( with id "[^"]+")?$/, function (cant, documentName, index, id, callback) {
-    var
-      document = this[documentName] || this.documentGrace;
+    const document = this[documentName] || this.documentGrace;
 
     if (id) {
       id = id.replace(/^ with id "([^"]+)"$/, '$1');
@@ -40,7 +38,7 @@ var apiSteps = function () {
   });
 
   this.When(/^I createOrReplace it$/, function (callback) {
-    var document = JSON.parse(JSON.stringify(this.documentGrace));
+    const document = JSON.parse(JSON.stringify(this.documentGrace));
 
     document._id = this.result._id;
 
@@ -77,7 +75,7 @@ var apiSteps = function () {
   });
 
   this.Then(/^I update the document with value "([^"]*)" in field "([^"]*)"(?: in index "([^"]*)")?$/, function (value, field, index) {
-    var body = {
+    const body = {
       [field]: value
     };
 
@@ -93,7 +91,7 @@ var apiSteps = function () {
   });
 
   this.Then(/^I replace the document with "([^"]*)" document$/, function (documentName, callback) {
-    var document = JSON.parse(JSON.stringify(this[documentName]));
+    const document = JSON.parse(JSON.stringify(this[documentName]));
 
     document._id = this.result._id;
     this.api.replace(document)
@@ -117,7 +115,8 @@ var apiSteps = function () {
   });
 
   this.When(/^I create multiple documents '([^']+)'( and get partial errors)?$/, function (documents, withErrors, callback) {
-    var body = {documents: []};
+    const body = {documents: []};
+
     documents = JSON.parse(documents);
 
     Object.keys(documents).forEach(key => {
@@ -143,7 +142,8 @@ var apiSteps = function () {
   });
 
   this.When(/^I replace multiple documents '([^']+)'( and get partial errors)?$/, function (documents, withErrors, callback) {
-    var body = {documents: []};
+    const body = {documents: []};
+
     documents = JSON.parse(documents);
 
     Object.keys(documents).forEach(key => {
@@ -169,7 +169,8 @@ var apiSteps = function () {
   });
 
   this.When(/^I update multiple documents '([^']+)'( and get partial errors)?$/, function (documents, withErrors, callback) {
-    var body = {documents: []};
+    const body = {documents: []};
+
     documents = JSON.parse(documents);
 
     Object.keys(documents).forEach(key => {
@@ -195,7 +196,8 @@ var apiSteps = function () {
   });
 
   this.When(/^I createOrReplace multiple documents '([^']+)'( and get partial errors)?$/, function (documents, withErrors, callback) {
-    var body = {documents: []};
+    const body = {documents: []};
+
     documents = JSON.parse(documents);
 
     Object.keys(documents).forEach(key => {
@@ -219,6 +221,6 @@ var apiSteps = function () {
         callback(error);
       });
   });
-};
+}
 
 module.exports = apiSteps;

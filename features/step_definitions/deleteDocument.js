@@ -1,7 +1,6 @@
-var
-  async = require('async');
+const async = require('async');
 
-var apiSteps = function () {
+function apiSteps () {
   this.Then(/^I remove the document(?: in index "([^"]*)")?$/, function (index, callback) {
     this.api.deleteById(this.result._id, index)
       .then(body => {
@@ -18,11 +17,9 @@ var apiSteps = function () {
   });
 
   this.Then(/^I remove documents with field "([^"]*)" equals to value "([^"]*)"(?: in index "([^"]*)")?$/, function (field, value, index, callback) {
-    var main = function (callbackAsync) {
+    function main (callbackAsync) {
       setTimeout(function () {
-        var query = { query: { match: {} } };
-
-        query.query.match[field] = value;
+        const query = {query: { match: {[field]: value}}};
 
         this.api.deleteByQuery(query, index)
           .then(body => {
@@ -74,6 +71,6 @@ var apiSteps = function () {
         callback(error);
       });
   });
-};
+}
 
 module.exports = apiSteps;

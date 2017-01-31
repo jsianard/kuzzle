@@ -1,4 +1,4 @@
-var
+const
   rc = require('rc'),
   /** @type KuzzleConfiguration */
   kuzzleConfig = require('../../lib/config');

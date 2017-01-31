@@ -1,8 +1,8 @@
-var
+const
   async = require('async'),
   Promise = require('bluebird');
 
-var apiSteps = function () {
+function apiSteps () {
   this.When(/^I create an index named "([^"]*)"$/, function (index, callback) {
     this.api.createIndex(index)
       .then(body => {
@@ -23,7 +23,7 @@ var apiSteps = function () {
   });
 
   this.Then(/^I'm ?(not)* able to find the index named "([^"]*)" in index list$/, function (not, index, callback) {
-    var main = function (callbackAsync) {
+    function main (callbackAsync) {
       this.api.listIndexes()
         .then(body => {
           if (body.error && !not) {
@@ -73,8 +73,7 @@ var apiSteps = function () {
           callbackAsync(error);
           return true;
         });
-    };
-
+    }
 
     async.retry({times: 20, interval: 20}, main.bind(this), function (err) {
       if (err) {
@@ -107,8 +106,7 @@ var apiSteps = function () {
   });
 
   this.Then(/^I refresh the index( ".*?")?$/, function (index, callback) {
-    var
-      idx = index ? index : this.fakeIndex;
+    const idx = index ? index : this.fakeIndex;
 
     this.api.refreshIndex(idx)
       .then(body => {
@@ -128,7 +126,7 @@ var apiSteps = function () {
   });
 
   this.When(/^I (enable|disable) the autoRefresh(?: on the index "(.*?)")?$/, function (enable, index) {
-    var
+    const
       idx = index ? index : this.fakeIndex,
       autoRefresh = (enable === 'enable');
 
@@ -145,8 +143,7 @@ var apiSteps = function () {
   });
 
   this.Then(/^I check the autoRefresh status(?: on the index "(.*?)")?$/, function (index) {
-    var
-      idx = index ? index : this.fakeIndex;
+    const idx = index ? index : this.fakeIndex;
 
     return this.api.getAutoRefresh(idx)
       .then(body => {
@@ -159,8 +156,6 @@ var apiSteps = function () {
         return body;
       });
   });
-
-
-};
+}
 
 module.exports = apiSteps;

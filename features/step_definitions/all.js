@@ -1,9 +1,8 @@
-var should = require('should');
+const should = require('should');
 
 module.exports = function () {
-
   this.Then(/^The (sorted )?result should match the (regex|json) (.*?)$/, function (sorted, type, pattern, callback) {
-    var
+    let
       regex,
       val = this.result.result;
 
@@ -39,8 +38,7 @@ module.exports = function () {
   });
 
   this.Then(/^The result should raise an error with message "(.*?)"$/, function (message, callback) {
-    var
-      val = this.result.error.error || this.result.error;
+    let val = this.result.error.error || this.result.error;
 
     try {
       should(val.message).be.eql(message);

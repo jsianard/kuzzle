@@ -1,4 +1,4 @@
-var apiSteps = function () {
+function apiSteps () {
   this.When(/^I get the server timestamp$/, function(callback) {
     this.api.now()
       .then(response => {
@@ -23,6 +23,6 @@ var apiSteps = function () {
 
     callback();
   });
-};
+}
 
 module.exports = apiSteps;

@@ -1,7 +1,6 @@
-var
-  async = require('async');
+const async = require('async');
 
-var apiSteps = function () {
+function apiSteps () {
   this.When(/^I get the profile mapping$/, function (callback) {
     this.api.getProfileMapping()
       .then(function (response) {
@@ -108,8 +107,7 @@ var apiSteps = function () {
 
 
   this.Then(/^I'm ?(not)* able to find the profile with id "([^"]*)"(?: with profile "([^"]*)")?$/, {timeout: 20 * 1000}, function (not, id, profile, callback) {
-    var
-      main;
+    let main;
 
     if (profile && !this.profiles[profile]) {
       return callback('Fixture for profile ' + profile + ' not exists');
@@ -196,16 +194,13 @@ var apiSteps = function () {
   });
 
   this.Then(/^I'm able to find "([\d]*)" profiles(?: containing the role with id "([^"]*)")?$/, function (profilesCount, roleId, callback) {
-    var body = {
-        policies: []
-      },
-      main;
+    const body = {policies: []};
 
     if (roleId) {
       body.policies.push(this.idPrefix + roleId);
     }
 
-    main = function (callbackAsync) {
+    function main (callbackAsync) {
       setTimeout(() => {
 
         this.api.searchProfiles(body).then(response => {
@@ -239,7 +234,7 @@ var apiSteps = function () {
           callbackAsync(error);
         });
       }, 200);
-    };
+    }
 
     async.retry(20, main.bind(this), function (err) {
       if (err) {
@@ -275,15 +270,11 @@ var apiSteps = function () {
   });
 
   this.Then(/^I'm able to do a multi get with "([^"]*)" and get "(\d*)" profiles$/, function (profiles, count, callback) {
-    var
-      main,
-      body;
-
-    body = {
+    const body = {
       ids: profiles.split(',').map(roleId => this.idPrefix + roleId)
     };
 
-    main = function (callbackAsync) {
+    function main (callbackAsync) {
       setTimeout(() => {
         this.api.mGetProfiles(body)
           .then(response => {
@@ -302,7 +293,7 @@ var apiSteps = function () {
             callbackAsync(error);
           });
       }, 100); // end setTimeout
-    };
+    }
 
     async.retry(20, main.bind(this), function (err) {
       if (err) {
@@ -313,6 +304,6 @@ var apiSteps = function () {
       callback();
     });
   });
-};
+}
 
 module.exports = apiSteps;

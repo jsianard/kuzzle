@@ -1,12 +1,11 @@
-var
+const
   Promise = require('bluebird'),
   should = require('should');
 
-
-module.exports = function () {
+function apiSteps () {
 
   this.When(/^I call the (.*?) method of the memory storage with arguments$/, function (command, args) {
-    var realArgs;
+    let realArgs;
 
     if (args && args !== '') {
       try{
@@ -30,7 +29,7 @@ module.exports = function () {
   });
 
   this.Then(/^The (sorted )?ms result should match the (regex|json) (.*?)$/, function (sorted, type, pattern, callback) {
-    var
+    let
       regex,
       val = this.memoryStorageResult.result;
 
@@ -60,4 +59,6 @@ module.exports = function () {
       }
     }
   });
-};
+}
+
+module.exports = apiSteps;

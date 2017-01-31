@@ -1,9 +1,8 @@
-var
-  async = require('async');
+const async = require('async');
 
-var apiSteps = function () {
+function apiSteps () {
   this.Then(/^I count ([\d]*) documents(?: in index "([^"]*)")?$/, function (number, index, callback) {
-    var main = function (callbackAsync) {
+    function main (callbackAsync) {
       setTimeout(() => {
         this.api.count({}, index)
           .then(body => {
@@ -16,7 +15,7 @@ var apiSteps = function () {
           })
           .catch(error => callbackAsync(error));
       }, 100); // end setTimeout
-    };
+    }
 
     async.retry(20, main.bind(this), function (err) {
       if (err) {
@@ -33,15 +32,9 @@ var apiSteps = function () {
   });
 
   this.Then(/^I count ([\d]*) documents with "([^"]*)" in field "([^"]*)(?: in index "([^"]*)")?"/, function (number, value, field, index, callback) {
-    var main = function (callbackAsync) {
+    function main (callbackAsync) {
       setTimeout(function () {
-        var query = {
-          query: {
-            match: {}
-          }
-        };
-
-        query.query.match[field] = value;
+        const query = {query: {match: {[field]: value}}};
 
         this.api.count(query, index)
           .then(body => {
@@ -61,7 +54,7 @@ var apiSteps = function () {
             callbackAsync(new Error(error));
           });
       }.bind(this), 20);
-    };
+    }
 
     async.retry(20, main.bind(this), function (error) {
       if (error) {
@@ -73,6 +66,6 @@ var apiSteps = function () {
     });
   });
 
-};
+}
 
 module.exports = apiSteps;

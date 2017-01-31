@@ -1,14 +1,12 @@
-'use strict';
-
-var
+const
   config = require('./config'),
   Promise = require('bluebird'),
   uuid = require('node-uuid'),
   io = require('socket.io-client'),
   ApiRT = require('./apiRT');
 
-var initSocket = function (socketName) {
-  var socket;
+function initSocket (socketName) {
+  let socket;
 
   if (!socketName) {
     socketName = 'client1';
@@ -27,12 +25,15 @@ var initSocket = function (socketName) {
   }
 
   return socketName;
-};
+}
 
-/** CONSTRUCT **/
-var ApiWebsocket = function () {
+/**
+ * @constructor
+ */
+function ApiWebsocket () {
   ApiRT.call(this);
-};
+}
+
 ApiWebsocket.prototype = new ApiRT();
 
 /** SPECIFIC FOR WEBSOCKET */
@@ -53,14 +54,13 @@ ApiWebsocket.prototype.disconnect = function () {
 };
 
 ApiWebsocket.prototype.unsubscribe = function (room, socketName) {
-  var
-    msg = {
-      controller: 'realtime',
-      action: 'unsubscribe',
-      collection: this.world.fakeCollection,
-      index: this.world.fakeIndex,
-      body: { roomId: room }
-    };
+  const msg = {
+    controller: 'realtime',
+    action: 'unsubscribe',
+    collection: this.world.fakeCollection,
+    index: this.world.fakeIndex,
+    body: {roomId: room}
+  };
 
   socketName = initSocket.call(this, socketName);
 
@@ -70,7 +70,7 @@ ApiWebsocket.prototype.unsubscribe = function (room, socketName) {
 };
 
 ApiWebsocket.prototype.send = function (msg, getAnswer, socketName) {
-  var
+  const
     routename = 'kuzzle',
     listen = (getAnswer !== undefined) ? getAnswer : true;
 
@@ -117,8 +117,7 @@ ApiWebsocket.prototype.send = function (msg, getAnswer, socketName) {
 };
 
 ApiWebsocket.prototype.sendAndListen = function (msg, socketName) {
-  var
-    routename = 'kuzzle';
+  const routename = 'kuzzle';
 
   if (!msg.requestId) {
     msg.requestId = uuid.v4();
@@ -131,7 +130,7 @@ ApiWebsocket.prototype.sendAndListen = function (msg, socketName) {
 
   return new Promise((resolve, reject) => {
     this.listSockets[socketName].once(msg.requestId, response => {
-      var listener = document => {
+      const listener = document => {
         this.responses = document;
       };
 

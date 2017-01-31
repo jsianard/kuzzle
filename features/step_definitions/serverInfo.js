@@ -1,4 +1,4 @@
-var apiSteps = function () {
+function apiSteps() {
   this.When(/^I get server informations$/, function (callback) {
     this.api.getServerInfo()
       .then(body => {
@@ -15,6 +15,6 @@ var apiSteps = function () {
       })
       .catch(error => callback(error));
   });
-};
+}
 
 module.exports = apiSteps;

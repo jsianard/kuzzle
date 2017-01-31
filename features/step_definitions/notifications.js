@@ -1,9 +1,8 @@
-var
-  async = require('async');
+const async = require('async');
 
-var apiSteps = function () {
+function apiSteps () {
   this.Then(/^I should receive a "([^"]*)" notification$/, function (action, callback) {
-    var main = function (callbackAsync) {
+    function main (callbackAsync) {
       setTimeout(function () {
         if (this.api.responses) {
           if (this.api.responses.error) {
@@ -21,7 +20,7 @@ var apiSteps = function () {
           callbackAsync('No notification received');
         }
       }.bind(this), 20);
-    };
+    }
 
     async.retry(20, main.bind(this), function (err) {
       if (err) {
@@ -47,8 +46,7 @@ var apiSteps = function () {
   });
 
   this.Then(/^The notification should have metadata$/, function (callback) {
-    var
-      diff = false;
+    let diff = false;
 
     if (!this.api.responses.metadata) {
       return callback('Expected metadata in the notification but none was found');
@@ -73,6 +71,6 @@ var apiSteps = function () {
     }
 
   });
-};
+}
 
 module.exports = apiSteps;

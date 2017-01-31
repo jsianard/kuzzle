@@ -1,4 +1,4 @@
-var
+const
   Promise = require('bluebird'),
   should = require('should'),
   sinon = require('sinon'),
@@ -8,20 +8,23 @@ var
   sandbox = sinon.sandbox.create();
 
 describe('Test: server controller', () => {
-  var
-    serverController,
-    kuzzle,
+  const
     foo = {foo: 'bar'},
     index = '%text',
-    collection = 'unit-test-serverController',
+    collection = 'unit-test-serverController';
+
+  let
+    serverController,
+    kuzzle,
     request;
 
   beforeEach(() => {
-    var data = {
+    const data = {
       controller: 'server',
       index,
       collection
     };
+
     kuzzle = new KuzzleMock();
     serverController = new ServerController(kuzzle);
     request = new Request(data);

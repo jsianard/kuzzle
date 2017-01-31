@@ -1,4 +1,4 @@
-var
+const
   should = require('should'),
   sinon = require('sinon'),
   sandbox = sinon.sandbox.create(),
@@ -8,11 +8,12 @@ var
   BadRequestError = require('kuzzle-common-objects').errors.BadRequestError;
 
 describe('Test: subscribe controller', () => {
-  var
+  const foo = {foo: 'bar'};
+
+  let
     kuzzle,
     request,
-    realtimeController,
-    foo = {foo: 'bar'};
+    realtimeController;
 
   beforeEach(() => {
     kuzzle = new KuzzleMock();

@@ -1,6 +1,4 @@
-'use strict';
-
-var
+const
   should = require('should'),
   sinon = require('sinon'),
   sandbox = sinon.sandbox.create(),
@@ -12,7 +10,7 @@ var
   PartialError = require('kuzzle-common-objects').errors.PartialError;
 
 describe('Test: document controller', () => {
-  var
+  let
     documentController,
     kuzzle,
     request,
@@ -566,7 +564,7 @@ describe('Test: document controller', () => {
 
   describe('#validate', () => {
     it('should send the right response when the given document satisfy the specifications', () => {
-      var expected = {
+      const expected = {
         errorMessages: {},
         validation: true
       };
@@ -596,7 +594,7 @@ describe('Test: document controller', () => {
     });
 
     it('should send the right response when the given document do not satisfy the specifications', () => {
-      var expected = {
+      const expected = {
         errorMessages: {
           fieldScope: {
             children: {

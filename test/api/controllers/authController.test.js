@@ -1,4 +1,4 @@
-var
+const
   should = require('should'),
   _ = require('lodash'),
   jwt = require('jsonwebtoken'),
@@ -15,7 +15,9 @@ var
   UnauthorizedError = require('kuzzle-common-objects').errors.UnauthorizedError,
   BadRequestError = require('kuzzle-common-objects').errors.BadRequestError,
   InternalError = require('kuzzle-common-objects').errors.InternalError,
-  Token = require('../../../lib/api/core/models/security/token'),
+  Token = require('../../../lib/api/core/models/security/token');
+
+let
   request,
   MockupStrategy;
 
@@ -34,9 +36,8 @@ MockupStrategy = function(name, verify) {
 util.inherits(MockupStrategy, passport.Strategy);
 
 MockupStrategy.prototype.authenticate = function(req) {
-  var
-    self = this,
-    username;
+  const self = this;
+  let username;
 
   if (req.body && req.body.username) {
     username = req.body.username;
@@ -56,8 +57,7 @@ MockupStrategy.prototype.authenticate = function(req) {
 };
 
 describe('Test the auth controller', () => {
-  var
-    kuzzle;
+  let kuzzle;
 
   before(() => {
     kuzzle = new Kuzzle();
@@ -71,10 +71,11 @@ describe('Test the auth controller', () => {
       .then(() => kuzzle.funnel.init())
       .then(() => {
         sandbox.stub(kuzzle.repositories.token, 'generateToken', (user, gtcontext, opts) => {
-          var
+          const
             token = new Token(),
-            expiresIn,
             encodedToken = jwt.sign({_id: user._id}, kuzzle.config.security.jwt.secret, opts);
+
+          let expiresIn;
 
           if (!opts.expiresIn) {
             opts.expiresIn = 0;
@@ -120,7 +121,8 @@ describe('Test the auth controller', () => {
       sandbox.stub(kuzzle.passport, 'authenticate', r => Promise.resolve({_id: r.query.username}));
       return kuzzle.funnel.controllers.auth.login(request)
         .then(response => {
-          var decodedToken = jwt.verify(response.jwt, params.security.jwt.secret);
+          const decodedToken = jwt.verify(response.jwt, params.security.jwt.secret);
+
           should(decodedToken._id).be.equal('jdoe');
         });
     });
@@ -135,8 +137,7 @@ describe('Test the auth controller', () => {
     });
 
     it('should use local strategy if no one is set', () => {
-
-      var spy = sandbox.stub(kuzzle.passport, 'authenticate', (data, strategy) => {
+      const spy = sandbox.stub(kuzzle.passport, 'authenticate', (data, strategy) => {
         should(strategy).be.exactly('local');
         return Promise.resolve('foo');
       });
@@ -157,7 +158,8 @@ describe('Test the auth controller', () => {
       sandbox.stub(kuzzle.passport, 'authenticate', r => Promise.resolve({_id: r.query.username}));
       kuzzle.funnel.controllers.auth.login(request, {connection: {id: 'banana'}})
         .then(response => {
-          var decodedToken = jwt.verify(response.jwt, params.security.jwt.secret);
+          const decodedToken = jwt.verify(response.jwt, params.security.jwt.secret);
+
           should(decodedToken._id).be.equal('jdoe');
 
           setTimeout(() => {
@@ -200,7 +202,7 @@ describe('Test the auth controller', () => {
   describe('#logout', () => {
 
     beforeEach(() => {
-      var
+      const
         signedToken = jwt.sign({_id: 'admin'}, params.security.jwt.secret, {algorithm: params.security.jwt.algorithm}),
         t = new Token();
 
@@ -231,7 +233,8 @@ describe('Test the auth controller', () => {
     });
 
     it('should emit an error if token cannot be expired', () => {
-      var error = new Error('Mocked error');
+      const error = new Error('Mocked error');
+
       kuzzle.repositories.token.expire.restore();
       sandbox.stub(kuzzle.repositories.token, 'expire').returns(Promise.reject(error));
       return should(kuzzle.funnel.controllers.auth.logout(request)).be.rejectedWith(error);
@@ -240,7 +243,7 @@ describe('Test the auth controller', () => {
 
   describe('#getCurrentUser', () => {
     it('should return the user given in the context', () => {
-      var req = new Request({body: {}}, {token: {userId: 'admin'}, user: {_id: 'admin'}});
+      const req = new Request({body: {}}, {token: {userId: 'admin'}, user: {_id: 'admin'}});
 
       return kuzzle.funnel.controllers.auth.getCurrentUser(req)
         .then(response => {
@@ -250,7 +253,7 @@ describe('Test the auth controller', () => {
   });
 
   describe('#checkToken', () => {
-    var testToken;
+    let testToken;
 
     beforeEach(() => {
       request = new Request({action: 'checkToken', controller: 'auth', body: {token: 'foobar'}}, {});
@@ -296,7 +299,8 @@ describe('Test the auth controller', () => {
     });
 
     it('should return a rejected promise if an error occurs', () => {
-      var error = new InternalError('Foobar');
+      const error = new InternalError('Foobar');
+
       sandbox.stub(kuzzle.repositories.token, 'verifyToken', arg => {
         should(arg).be.eql(request.input.body.token);
         return Promise.reject(error);
@@ -307,8 +311,7 @@ describe('Test the auth controller', () => {
   });
 
   describe('#updateSelf', () => {
-    var
-      persistOptions;
+    let persistOptions;
 
     beforeEach(() => {
       persistOptions = {};
@@ -367,20 +370,22 @@ describe('Test the auth controller', () => {
   });
 
   describe('#getMyRights', () => {
-    var req = new Request({body: {}}, {token: {userId: 'test'}, user: {
-      _id: 'test',
-      getRights: () => {
-        return Promise.resolve({
-          rights1: {controller: 'read', action: 'get', index: 'foo', collection: 'bar', value: 'allowed'},
-          rights2: {controller: 'write', action: 'delete', index: '*', collection: '*', value: 'conditional'}
-        });
+    const req = new Request({body: {}}, {
+      token: {userId: 'test'}, user: {
+        _id: 'test',
+        getRights: () => {
+          return Promise.resolve({
+            rights1: {controller: 'read', action: 'get', index: 'foo', collection: 'bar', value: 'allowed'},
+            rights2: {controller: 'write', action: 'delete', index: '*', collection: '*', value: 'conditional'}
+          });
+        }
       }
-    }});
+    });
 
     it('should be able to get current user\'s rights', () => {
       return kuzzle.funnel.controllers.auth.getMyRights(req)
         .then(response => {
-          var filteredItem;
+          let filteredItem;
 
           should(response).be.instanceof(Object);
           should(response.hits).be.an.Array();

@@ -1,4 +1,4 @@
-var
+const
   rewire = require('rewire'),
   should = require('should'),
   sinon = require('sinon'),
@@ -9,8 +9,7 @@ var
   Cli = rewire('../../../lib/api/cli/index');
 
 describe('Tests: api/cli/index.js', () => {
-  var
-    kuzzle;
+  let kuzzle;
 
   beforeEach(() => {
     kuzzle = new KuzzleMock();
@@ -22,7 +21,7 @@ describe('Tests: api/cli/index.js', () => {
 
   describe('#constructor', () => {
     it('should build proper properties', () => {
-      var cli = new Cli(kuzzle);
+      const cli = new Cli(kuzzle);
       should(cli.actions).be.Object();
       should(cli.actions.adminExists).be.instanceOf(Action);
       should(cli.actions.clearCache).be.instanceOf(Action);
@@ -35,12 +34,12 @@ describe('Tests: api/cli/index.js', () => {
   });
 
   describe('#do', () => {
-    var
+    let
       cli,
       reset;
 
     beforeEach(() => {
-      var requireStub = sinon.stub();
+      const requireStub = sinon.stub();
       requireStub.withArgs('../../config').returns(kuzzle.config);
       requireStub.returns();
 
@@ -69,7 +68,7 @@ describe('Tests: api/cli/index.js', () => {
     });
 
     it('should send the action to the internalBroker', () => {
-      var
+      const
         data = {foo: 'bar', requestId: 'test'},
         context = {
           kuzzle: kuzzle,
@@ -109,7 +108,7 @@ describe('Tests: api/cli/index.js', () => {
     });
 
     it('should output the error to the console if any', () => {
-      var
+      const
         error = new Error('test'),
         context = {
           actions: {
@@ -130,5 +129,4 @@ describe('Tests: api/cli/index.js', () => {
         });
     });
   });
-
 });

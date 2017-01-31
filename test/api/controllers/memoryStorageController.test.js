@@ -1,4 +1,4 @@
-var
+const
   _ = require('lodash'),
   should = require('should'),
   sinon = require('sinon'),
@@ -12,8 +12,9 @@ var
   MemoryStorageController = rewire('../../../lib/api/controllers/memoryStorageController.js');
 
 describe('Test: memoryStorage controller', () => {
-  var
-    dbname = 'unit-tests',
+  const dbname = 'unit-tests';
+
+  let
     msController,
     called,
     extractArgumentsFromRequest,
@@ -27,19 +28,18 @@ describe('Test: memoryStorage controller', () => {
     kuzzle;
 
   before(() => {
-    var
-      wrapped = f => {
-        return function () {
-          if (called === undefined) {
-            called = {};
-          }
-          called[f.name] = {
-            called: true,
-            args: Array.prototype.slice.call(arguments)
-          };
-          return f.apply(this, Array.prototype.slice.call(arguments));
+    const wrapped = f => {
+      return function () {
+        if (called === undefined) {
+          called = {};
+        }
+        called[f.name] = {
+          called: true,
+          args: Array.prototype.slice.call(arguments)
         };
+        return f.apply(this, Array.prototype.slice.call(arguments));
       };
+    };
 
     testMapping = {
       noarg: null,
@@ -118,7 +118,8 @@ describe('Test: memoryStorage controller', () => {
 
   describe('#constructor', () => {
     it('should not expose blacklisted methods', () => {
-      var blacklist = MemoryStorageController.__get__('blacklist');
+      const blacklist = MemoryStorageController.__get__('blacklist');
+
       should(blacklist).be.an.Array();
       should(blacklist).not.be.empty();
 
@@ -128,7 +129,7 @@ describe('Test: memoryStorage controller', () => {
     });
 
     it('should construct the allowed functions', () => {
-      var
+      const
         blacklisted = MemoryStorageController.__get__('blacklist'),
         allowed = _.difference(kuzzle.services.list.memoryStorage.commands, blacklisted);
 
@@ -144,14 +145,14 @@ describe('Test: memoryStorage controller', () => {
   describe('#extractArgumentsFromRequest', () => {
 
     it('should return an empty array when the mapping does not list args', () => {
-      var result = extractArgumentsFromRequest('noarg', request);
+      const result = extractArgumentsFromRequest('noarg', request);
 
       should(result).be.an.Array();
       should(result).be.empty();
     });
 
     it('should return the _id on the simple arg', () => {
-      var result = extractArgumentsFromRequest('simplearg', request);
+      const result = extractArgumentsFromRequest('simplearg', request);
 
       should(result).be.an.Array();
       should(result).length(1);
@@ -159,7 +160,7 @@ describe('Test: memoryStorage controller', () => {
     });
 
     it('should return an arg from the body', () => {
-      var result = extractArgumentsFromRequest('bodyarg', request);
+      const result = extractArgumentsFromRequest('bodyarg', request);
 
       should(result).be.an.Array();
       should(result).length(1);
@@ -167,7 +168,7 @@ describe('Test: memoryStorage controller', () => {
     });
 
     it('should skip an missing argument if asked', () => {
-      var result = extractArgumentsFromRequest('skiparg', request);
+      const result = extractArgumentsFromRequest('skiparg', request);
 
       should(result).be.an.Array();
       should(result).length(1);
@@ -175,7 +176,7 @@ describe('Test: memoryStorage controller', () => {
     });
 
     it('should merge the arguments if asked', () => {
-      var result = extractArgumentsFromRequest('mergearg', request);
+      const result = extractArgumentsFromRequest('mergearg', request);
 
       should(result).be.an.Array();
       should(result).length(4);
@@ -183,7 +184,7 @@ describe('Test: memoryStorage controller', () => {
     });
 
     it('should map the argument if asked', () => {
-      var result = extractArgumentsFromRequest('maparg', request);
+      const result = extractArgumentsFromRequest('maparg', request);
 
       should(result).be.an.Array();
       should(result).length(7);
@@ -201,7 +202,7 @@ describe('Test: memoryStorage controller', () => {
     });
 
     it('should handle the _id + value + no option case', () => {
-      var
+      const
         req = new Request({
           _id: 'myKey',
           body: {
@@ -219,7 +220,7 @@ describe('Test: memoryStorage controller', () => {
     });
 
     it('should handle the _id + no value + no option case', () => {
-      var
+      const
         req = new Request({
           _id: 'myKey',
           body: {
@@ -236,20 +237,20 @@ describe('Test: memoryStorage controller', () => {
 
     it('should handle the optional parameters', () => {
       // NB: This is an invalid message but the method lets Redis handle the error (cannot mix NX & XX params)
-      var
-        req = new Request({
-          _id: 'myKey',
-          body: {
-            value: {
-              foo: 'bar'
-            },
-            ex: 111,
-            px: 222,
-            nx: true,
-            xx: true
-          }
-        }),
-        result = extractArgumentsFromRequestForSet(req);
+      const req = new Request({
+        _id: 'myKey',
+        body: {
+          value: {
+            foo: 'bar'
+          },
+          ex: 111,
+          px: 222,
+          nx: true,
+          xx: true
+        }
+      });
+
+      let result = extractArgumentsFromRequestForSet(req);
 
       should(result).be.an.Array();
       should(result).length(6);
@@ -284,7 +285,7 @@ describe('Test: memoryStorage controller', () => {
     });
 
     it ('should handle the request if no optional parameter is given', () => {
-      var
+      const
         req = new Request({
           _id: 'myKey'
         }),
@@ -296,7 +297,7 @@ describe('Test: memoryStorage controller', () => {
     });
 
     it('should handle a request with some optional parameters', () => {
-      var
+      const
         req = new Request({
           _id: 'myKey',
           body: {
@@ -328,24 +329,24 @@ describe('Test: memoryStorage controller', () => {
     });
 
     it('should extract any given argument', () => {
-      var
-        req = new Request({
-          _id: 'myKey',
-          body: {
-            nx: true,
-            xx: true,
-            ch: true,
-            incr: true,
-            score: 'scoreVal',
-            member: 'memberVal',
-            values: [
-              { score: 1, member: 'm1' },
-              { score: 2, member: 'm2' },
-              { score: 3, member: 'm3' }
-            ]
-          }
-        }),
-        result = extractArgumentsFromRequestForZAdd(req);
+      const req = new Request({
+        _id: 'myKey',
+        body: {
+          nx: true,
+          xx: true,
+          ch: true,
+          incr: true,
+          score: 'scoreVal',
+          member: 'memberVal',
+          values: [
+            {score: 1, member: 'm1'},
+            {score: 2, member: 'm2'},
+            {score: 3, member: 'm3'}
+          ]
+        }
+      });
+
+      let result = extractArgumentsFromRequestForZAdd(req);
 
       should(result).be.an.Array();
       should(result).length(12);
@@ -389,7 +390,7 @@ describe('Test: memoryStorage controller', () => {
     });
 
     it('should extract any given argument', () => {
-      var
+      const
         req = new Request({
           _id: 'myKey',
           body: {
@@ -426,12 +427,11 @@ describe('Test: memoryStorage controller', () => {
     });
 
     it('should throw an error an invalid keys parameter is given', () => {
-      var
-        req = new Request({
-          body: {
-            keys: 'unvalid value'
-          }
-        });
+      let req = new Request({
+        body: {
+          keys: 'unvalid value'
+        }
+      });
 
       should(extractArgumentsFromRequestForZInterstore.bind(null, req)).throw(BadRequestError);
 
@@ -452,7 +452,7 @@ describe('Test: memoryStorage controller', () => {
     });
 
     it('should return a valid response', () => {
-      var req = new Request({
+      const req = new Request({
         controller: 'memoryStore',
         action: 'set',
         _id: 'myKey',
@@ -472,15 +472,14 @@ describe('Test: memoryStorage controller', () => {
     });
 
     it('custom mapping checks - zrange', () => {
-      var
-        req = new Request({
-          controller: 'memoryStore',
-          action: 'zrange',
-          _id: 'myKey',
-          start: 'startVal',
-          stop: 'stopVal',
-          withscores: true
-        });
+      const req = new Request({
+        controller: 'memoryStore',
+        action: 'zrange',
+        _id: 'myKey',
+        start: 'startVal',
+        stop: 'stopVal',
+        withscores: true
+      });
 
       return msController.zrange(req)
         .then(response => {
@@ -495,7 +494,7 @@ describe('Test: memoryStorage controller', () => {
     });
 
     it('custom mapping checks - zrangebylex', () => {
-      var
+      const
         req = new Request({
           controller: 'memoryStore',
           action: 'zrangebylex',
@@ -536,7 +535,7 @@ describe('Test: memoryStorage controller', () => {
     });
 
     it('custom mapping checks - zrangebyscore', () => {
-      var
+      const
         req = new Request({
           controller: 'memoryStore',
           action: 'zrangebyscore',

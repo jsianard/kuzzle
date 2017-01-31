@@ -1,4 +1,4 @@
-var
+const
   sinon = require('sinon'),
   Promise = require('bluebird'),
   should = require('should'),
@@ -7,10 +7,11 @@ var
   KuzzleMock = require('../mocks/kuzzle.mock');
 
 describe('/lib/api/kuzzle.js', () => {
-  var kuzzle;
+  let kuzzle;
 
   beforeEach(() => {
-    var mock = new KuzzleMock();
+    const mock = new KuzzleMock();
+
     kuzzle = new Kuzzle();
 
     [
@@ -167,8 +168,8 @@ describe('/lib/api/kuzzle.js', () => {
     });
 
     it('should start all services and register errors handlers if enabled on kuzzle.start', () => {
-      var
-        mock,
+      let mock;
+      const
         processExitSpy = sinon.spy(),
         processOnSpy = sinon.spy(),
         processRemoveAllListenersSpy = sinon.spy();
@@ -235,7 +236,7 @@ describe('/lib/api/kuzzle.js', () => {
     });
 
     it('does not really test anything but increases coverage', () => {
-      var error = new Error('error');
+      const error = new Error('error');
 
       kuzzle.internalEngine.init.returns(Promise.reject(error));
 

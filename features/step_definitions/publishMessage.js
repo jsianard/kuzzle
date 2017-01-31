@@ -1,4 +1,4 @@
-var apiSteps = function () {
+function apiSteps () {
   this.When(/^I publish a message$/, function (callback) {
     this.api.publish(this.documentGrace)
       .then(body => {
@@ -28,6 +28,6 @@ var apiSteps = function () {
 
     callback(new Error('No request id returned'));
   });
-};
+}
 
 module.exports = apiSteps;

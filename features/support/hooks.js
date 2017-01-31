@@ -1,5 +1,3 @@
-'use strict';
-
 const
   _ = require('lodash'),
   async = require('async'),
@@ -126,7 +124,7 @@ const myHooks = function () {
 module.exports = myHooks;
 
 function setAPI (world, apiName) {
-  var
+  const
     Api = require('./api' + apiName),
     api = new Api();
 
@@ -136,12 +134,11 @@ function setAPI (world, apiName) {
 }
 
 function restApi () {
-  var
+  const
     W = require('./world'),
     world = new (new W()).World();
 
   return setAPI(world, 'Http');
-
 }
 
 function cleanSecurity (callback) {
@@ -167,7 +164,7 @@ function cleanSecurity (callback) {
       });
     })
     .then(results => {
-      var
+      const
         promises = [],
         regex = new RegExp('^' + this.idPrefix);
 
@@ -195,7 +192,7 @@ function cleanSecurity (callback) {
       });
     })
     .then(results => {
-      var
+      const
         promises = [],
         regex = new RegExp('^' + this.idPrefix);
 
@@ -223,7 +220,7 @@ function cleanSecurity (callback) {
       });
     })
     .then(results => {
-      var
+      const
         promises = [],
         regex = new RegExp('^' + this.idPrefix);
 
@@ -283,7 +280,7 @@ function cleanValidations(callback) {
       });
     })
     .then(body => {
-      var
+      const
         promises = [],
         regex = new RegExp('^kuzzle-test-');
 

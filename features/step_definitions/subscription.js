@@ -1,6 +1,6 @@
-var apiSteps = function () {
+function apiSteps () {
   this.Given(/^A room subscription listening to "([^"]*)" having value "([^"]*)"(?: with socket "([^"]*)")?$/, function (key, value, socketName, callback) {
-    var filter = {
+    const filter = {
       equals: {
         [key]: value
       }
@@ -36,7 +36,7 @@ var apiSteps = function () {
   });
 
   this.Given(/^A room subscription listening field "([^"]*)" doesn't exists$/, function (key, callback) {
-    var filter = {not: {exists: {field : key}}};
+    const filter = {not: {exists: {field : key}}};
 
     this.api.subscribe(filter)
       .then(body => {
@@ -53,7 +53,7 @@ var apiSteps = function () {
   });
 
   this.Then(/^I unsubscribe(?: socket "([^"]*)")?/, function (socketName, callback) {
-    var rooms;
+    let rooms;
 
     if (socketName) {
       rooms = Object.keys(this.api.subscribedRooms[socketName]);
@@ -81,7 +81,7 @@ var apiSteps = function () {
    * Remove room subscription
    */
   this.Then(/^I remove the first room(?: for socket "([^"]*)")?/, function (socketName, callback) {
-    var rooms;
+    let rooms;
 
     if (socketName) {
       rooms = Object.keys(this.api.subscribedRooms[socketName]);
@@ -147,9 +147,8 @@ var apiSteps = function () {
   });
 
   this.Then(/^In my list there is a collection "([^"]*)" with ([\d]*) room and ([\d]*) subscriber$/, function(collection, countRooms, countSubscribers, callback) {
-    var
-      rooms = Object.keys(this.result[this.fakeIndex][collection]),
-      count = 0;
+    const rooms = Object.keys(this.result[this.fakeIndex][collection]);
+    let count = 0;
 
     if (!this.result[this.fakeIndex]) {
       return callback(new Error('No entry for index ' + this.fakeIndex));
@@ -173,6 +172,6 @@ var apiSteps = function () {
 
     callback();
   });
-};
+}
 
 module.exports = apiSteps;

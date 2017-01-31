@@ -1,5 +1,5 @@
-module.exports = function () {
-  var
+function apiSteps () {
+  const
     validSpecifications = {
       strict: true,
       fields: {
@@ -28,8 +28,9 @@ module.exports = function () {
     };
 
   this.When(/^There is (no)?(a)? specifications? for index "([^"]*)" and collection "([^"]*)"$/, {}, function(no, some, index, collection, callback) {
-    var idx = index ? index : this.fakeIndex;
-    var coll = collection ? collection : this.fakeCollection;
+    const
+      idx = index || this.fakeIndex,
+      coll = collection || this.fakeCollection;
 
     this.api.getSpecifications(idx, coll)
       .then(body => {
@@ -54,13 +55,15 @@ module.exports = function () {
       });
   });
 
-  this.Then(/^I put a (not )?valid specification for index "([^"]*)" and collection "([^"]*)"$/, {}, function(not, index, collection, callback) {
-    var idx = index ? index : this.fakeIndex;
-    var coll = collection ? collection : this.fakeCollection;
-    var specifications = {};
-
-    specifications[idx] = {};
-    specifications[idx][coll] = not ? notValidSpecifications : validSpecifications;
+  this.Then(/^I put a (not )?valid specification for index "([^"]*)" and collection "([^"]*)"$/, {}, function(not, idx, coll, callback) {
+    const
+      index = idx || this.fakeIndex,
+      collection = coll || this.fakeCollection,
+      specifications = {
+        [index]: {
+          [collection]: not ? notValidSpecifications : validSpecifications
+        }
+      };
 
     this.api.updateSpecifications(specifications)
       .then(body => {
@@ -106,13 +109,14 @@ module.exports = function () {
   });
 
   this.When(/^I post a(n in)? ?valid specification$/, {}, function(not, callback) {
-    var
+    const
       index = this.fakeIndex,
       collection = this.fakeCollection,
-      specifications = {};
-
-    specifications[index] = {};
-    specifications[index][collection] = not ? notValidSpecifications : validSpecifications;
+      specifications = {
+        [index]: {
+          [collection]: not ? notValidSpecifications : validSpecifications
+        }
+      };
 
     this.api.validateSpecifications(specifications)
       .then(body => {
@@ -131,7 +135,7 @@ module.exports = function () {
   });
 
   this.When(/^I post a(n in)? ?valid document/, {}, function(not, callback) {
-    var
+    const
       index = this.fakeIndex,
       collection = this.fakeCollection,
       document = not ? notValidDocument : validDocument;
@@ -154,8 +158,9 @@ module.exports = function () {
   });
 
   this.When(/^I delete the specifications (again )?for index "([^"]*)" and collection "([^"]*)"$/, {}, function(again, index, collection, callback) {
-    var idx = index ? index : this.fakeIndex;
-    var coll = collection ? collection : this.fakeCollection;
+    const
+      idx = index ? index : this.fakeIndex,
+      coll = collection ? collection : this.fakeCollection;
 
     this.api.deleteSpecifications(idx, coll)
       .then(body => {
@@ -171,5 +176,6 @@ module.exports = function () {
         return null;
       });
   });
+}
 
-};
+module.exports = apiSteps;

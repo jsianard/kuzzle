@@ -1,7 +1,6 @@
-var
-  async = require('async');
+const async = require('async');
 
-var apiSteps = function () {
+function apiSteps () {
   this.When(/^I get the role mapping$/, function (callback) {
     this.api.getRoleMapping()
       .then(function (response) {
@@ -61,9 +60,8 @@ var apiSteps = function () {
   });
 
   this.Then(/^I'm ?(not)* able to find a role with id "([^"]*)"(?: with role "([^"]*)")?$/, function (not, id, role, callback) {
-    var
-      controller,
-      main;
+    let
+      controller;
 
     id = this.idPrefix + id;
 
@@ -71,7 +69,7 @@ var apiSteps = function () {
       return callback('Fixture for role ' + role + ' not exists');
     }
 
-    main = function (callbackAsync) {
+    function main (callbackAsync) {
       setTimeout(() => {
         this.api.getRole(id)
           .then(body => {
@@ -112,7 +110,7 @@ var apiSteps = function () {
             callback(error);
           });
       }, 20); // end setTimeout
-    };
+    }
 
     async.retry(20, main.bind(this), function (err) {
       if (err) {
@@ -145,8 +143,7 @@ var apiSteps = function () {
   });
 
   this.Then(/^I'm able to find "(\d*)" role by searching controller corresponding to role "([^"]*)"(?: from "([^"]*)" to "([^"]*)")?$/, function (count, role, from, size, callback) {
-    var
-      main,
+    let
       controller,
       body;
 
@@ -161,7 +158,7 @@ var apiSteps = function () {
       size: size || 999
     };
 
-    main = function (callbackAsync) {
+    function main (callbackAsync) {
       setTimeout(() => {
         this.api.searchRoles(body)
           .then(aBody => {
@@ -184,7 +181,7 @@ var apiSteps = function () {
             callbackAsync(error);
           });
       }, 100); // end setTimeout
-    };
+    }
 
     async.retry(20, main.bind(this), function (err) {
       if (err) {
@@ -214,15 +211,11 @@ var apiSteps = function () {
   });
 
   this.Then(/^I'm able to do a multi get with "([^"]*)" and get "(\d*)" roles$/, function (roles, count, callback) {
-    var
-      main,
-      body;
-
-    body = {
+    const body = {
       ids: roles.split(',').map(roleId => this.idPrefix + roleId)
     };
 
-    main = function (callbackAsync) {
+    function main (callbackAsync) {
       setTimeout(() => {
         this.api.mGetRoles(body)
           .then(response => {
@@ -241,7 +234,7 @@ var apiSteps = function () {
             callbackAsync(error);
           });
       }, 100); // end setTimeout
-    };
+    }
 
     async.retry(20, main.bind(this), function (err) {
       if (err) {
@@ -254,8 +247,7 @@ var apiSteps = function () {
   });
 
   this.Then(/^I'm ?(not)* allowed to create a document in index "([^"]*)" and collection "([^"]*)"$/, function (not, index, collection, callback) {
-    var
-      document = this.documentGrace;
+    const document = this.documentGrace;
 
     this.api.create(document, index, collection)
       .then(body => {

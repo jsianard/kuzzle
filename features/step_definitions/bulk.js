@@ -1,9 +1,8 @@
-var
-  async = require('async');
+const async = require('async');
 
-var apiSteps = function () {
+function apiSteps () {
   this.Then(/^I can retrieve actions from bulk import$/, function (callback) {
-    var main = function (callbackAsync) {
+    function main (callbackAsync) {
       setTimeout(() => {
         // execute in parallel both tests: test if create/update work well and test if delete works well
         async.parallelLimit({
@@ -55,7 +54,7 @@ var apiSteps = function () {
           callbackAsync();
         }); // end async.parallel
       }, 20); // end setTimeout
-    }; // end method main
+    }
 
     async.retry(20, main.bind(this), function (err) {
       if (err) {
@@ -112,6 +111,6 @@ var apiSteps = function () {
         callback(error);
       });
   });
-};
+}
 
 module.exports = apiSteps;

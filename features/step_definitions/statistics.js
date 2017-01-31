@@ -1,4 +1,4 @@
-var apiSteps = function () {
+function apiSteps () {
   this.When(/^I get the last statistics frame$/, function (callback) {
     this.api.getLastStats()
       .then(function (response) {
@@ -79,6 +79,6 @@ var apiSteps = function () {
 
     callback('Expected at least 1 statistic frame, found: ' + this.result);
   });
-};
+}
 
 module.exports = apiSteps;

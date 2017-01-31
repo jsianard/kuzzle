@@ -1,5 +1,8 @@
 module.exports = function () {
-  this.World = function World () {
+  /**
+   * @constructor
+   */
+  function World () {
     this.api = null;
     this.kuzzleConfig = require('../../lib/config');
     this.idPrefix = 'kuzzle-functional-tests-';
@@ -223,5 +226,7 @@ module.exports = function () {
     };
 
     this.memoryStorageResult = null;
-  };
+  }
+
+  this.World = World;
 };

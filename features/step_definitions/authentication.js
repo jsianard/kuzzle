@@ -1,4 +1,4 @@
-var apiSteps = function () {
+function apiSteps () {
   this.When(/^I log in as (.*?):(.*?) expiring in (.*?)$/, function (login, password, expiration, callback) {
     this.api.login('local', {username: this.idPrefix + login, password: password, expiresIn: expiration})
       .then(body => {
@@ -90,6 +90,6 @@ var apiSteps = function () {
       })
       .catch(err => callback(err));
   });
-};
+}
 
 module.exports = apiSteps;

@@ -1,4 +1,4 @@
-var
+const
   should = require('should'),
   sinon = require('sinon'),
   sandbox = sinon.sandbox.create(),
@@ -8,15 +8,16 @@ var
   dataHandler = require('../../../../lib/api/controllers/cli/data');
 
 describe('Test: data handler', () => {
-  var
+  const fixtures = {
+    'index': {
+      'collection': [
+        {'action': {'param': 'value'}}
+      ]
+    }
+  };
+
+  let
     data,
-    fixtures = {
-      'index': {
-        'collection': [
-          {'action': {'param': 'value'}}
-        ]
-      }
-    },
     kuzzle;
 
   beforeEach(() => {
@@ -29,18 +30,17 @@ describe('Test: data handler', () => {
   });
 
   it('should import fixtures if required', () => {
-    var
-      req = new Request({
-        index: 'index',
-        collection: 'collection',
-        body: {fixtures: fixtures}
-      });
+    const req = new Request({
+      index: 'index',
+      collection: 'collection',
+      body: {fixtures: fixtures}
+    });
 
     kuzzle.services.list.storageEngine.import.returns(Promise.resolve({items: 'response'}));
 
     return data(req)
       .then(response => {
-        var importArg = kuzzle.services.list.storageEngine.import.firstCall.args[0];
+        const importArg = kuzzle.services.list.storageEngine.import.firstCall.args[0];
 
         try {
           should(response).be.eql(['response']);
@@ -58,7 +58,7 @@ describe('Test: data handler', () => {
   });
 
   it('should reject the promise in case of partial errors when importing fixtures', () => {
-    var
+    const
       req = new Request({
         index: 'index',
         collection: 'collection',
@@ -80,50 +80,46 @@ describe('Test: data handler', () => {
   });
 
   it('should import mapping if required', () => {
-    var
-      req = new Request({
-        index: 'index',
-        collection: 'collection',
-        body: {
-          mappings: {
-            index1: {
-              col1: {
-                mapping: 'col1'
-              },
-              col2: {
-                mapping: 'col2'
-              }
+    const req = new Request({
+      index: 'index',
+      collection: 'collection',
+      body: {
+        mappings: {
+          index1: {
+            col1: {
+              mapping: 'col1'
             },
-            index2: {
-              col1: {
-                mapping: 'col1'
-              }
+            col2: {
+              mapping: 'col2'
+            }
+          },
+          index2: {
+            col1: {
+              mapping: 'col1'
             }
           }
         }
-      });
+      }
+    });
 
     return data(req)
       .then(() => {
-        var
-          arg1 = kuzzle.services.list.storageEngine.updateMapping.firstCall.args[0],
-          arg2 = kuzzle.services.list.storageEngine.updateMapping.secondCall.args[0],
-          arg3 = kuzzle.services.list.storageEngine.updateMapping.thirdCall.args[0];
+        const updateMapping = kuzzle.services.list.storageEngine.updateMapping;;
 
         try {
           should(kuzzle.services.list.storageEngine.updateMapping).be.calledThrice();
 
-          should(arg1.input.resource.index).be.exactly('index1');
-          should(arg1.input.resource.collection).be.exactly('col1');
-          should(arg1.input.body).be.eql({mapping: 'col1'});
+          should(updateMapping.firstCall.args[0].input.resource.index).be.exactly('index1');
+          should(updateMapping.firstCall.args[0].input.resource.collection).be.exactly('col1');
+          should(updateMapping.firstCall.args[0].input.body).be.eql({mapping: 'col1'});
 
-          should(arg2.input.resource.index).be.exactly('index1');
-          should(arg2.input.resource.collection).be.exactly('col2');
-          should(arg2.input.body).be.eql({mapping: 'col2'});
+          should(updateMapping.secondCall.args[0].input.resource.index).be.exactly('index1');
+          should(updateMapping.secondCall.args[0].input.resource.collection).be.exactly('col2');
+          should(updateMapping.secondCall.args[0].input.body).be.eql({mapping: 'col2'});
 
-          should(arg3.input.resource.index).be.exactly('index2');
-          should(arg3.input.resource.collection).be.exactly('col1');
-          should(arg3.input.body).be.eql({mapping: 'col1'});
+          should(updateMapping.thirdCall.args[0].input.resource.index).be.exactly('index2');
+          should(updateMapping.thirdCall.args[0].input.resource.collection).be.exactly('col1');
+          should(updateMapping.thirdCall.args[0].input.body).be.eql({mapping: 'col1'});
 
           return Promise.resolve();
         }
@@ -134,7 +130,7 @@ describe('Test: data handler', () => {
   });
 
   it('should import both fixtures and mappings if required', () => {
-    var request = new Request({
+    const request = new Request({
       index: 'index',
       collection: 'collection',
       body: {

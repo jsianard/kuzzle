@@ -1,8 +1,8 @@
-var
+const
   _ = require('lodash'),
   async = require('async');
 
-module.exports = function () {
+function apiSteps () {
   this.When(/^I get the user mapping$/, function (callback) {
     this.api.getUserMapping()
       .then(function (response) {
@@ -42,9 +42,8 @@ module.exports = function () {
   });
 
   this.When(/^I (can't )?create a (new )?(restricted )?user "(.*?)" with id "(.*?)"$/, {timeout: 20000}, function (not, isNew, isRestricted, user, id, callback) {
-    var
-      userObject = this.users[user],
-      method;
+    const userObject = this.users[user];
+    let method;
 
     if (isRestricted) {
       method = 'createRestrictedUser';
@@ -86,8 +85,7 @@ module.exports = function () {
 
     this.api.getUser(id)
       .then(body => {
-        var
-          matchObject;
+        let matchObject;
 
         if (body.error) {
           callback(new Error(body.error.message));
@@ -110,7 +108,7 @@ module.exports = function () {
   });
 
   this.Then(/^I search for {(.*?)} and find (\d+) users(?: matching {(.*?)})?$/, function (query, count, match, callback) {
-    var run;
+    let run;
 
     if (count) {
       count = parseInt(count);
@@ -121,7 +119,7 @@ module.exports = function () {
 
       this.api.searchUsers(JSON.parse('{' + query + '}'))
         .then(body => {
-          var matchFunc;
+          let matchFunc;
 
           if (body.error) {
             return cb(new Error(body.error.message));
@@ -223,6 +221,6 @@ module.exports = function () {
       .catch(error => { callback(error); });
 
   });
+}
 
-};
-
+module.exports = apiSteps;
